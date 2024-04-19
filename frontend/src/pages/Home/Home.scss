@@ -1,0 +1,171 @@
+.home {
+  //background-color: antiquewhite;
+  background-image: url("../../assets/book-bg.png");
+  background-size: cover;
+  background-position: center; // Center the background image
+  background-repeat: no-repeat;
+  backdrop-filter: blur(50px); 
+  min-height: 100vh;
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    color: black;
+    box-shadow: 0 0 10px #000;
+    background-color: rgba(255, 255, 255, 0.627); 
+                      // #FFCC00;
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+
+      .logo-link {
+        text-decoration: none;
+      }
+
+      .logo {
+        width: 100px;
+        height: auto;
+        margin-right: 1rem;
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        color:#000;
+      }
+
+      .book-slogan {
+        font-size: 20px;
+      }
+    }
+
+    .home-links {
+      display: flex;
+      justify-content: flex-end;
+      list-style: none;
+      padding: 0;
+      font-size: 20px;
+      text-transform: uppercase;
+
+      li {
+        margin-left: 1rem;
+        font-size: 20px;
+
+        a {
+          color: black;
+          text-decoration: none;
+        }
+        &:hover {
+          background-color: darkorange;
+        }
+      }
+    }
+  }
+
+  .hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 0;
+   // background-color: orange;
+   
+
+    .hero-text {
+      text-align: center;
+      color: #fff;
+      padding-right: 8%;
+     // background-color: orange;
+
+      h2 {
+        margin-bottom: 1rem;
+        color:black;
+        //background-color: black;
+        box-shadow: 0 0 10px #000;
+        background-color: rgba(246, 226, 11, 0.645);
+      }
+
+      p {
+        margin-bottom: 2rem;
+        //justify-content: center;
+        color:black;
+        //font-size: 10px;
+        box-shadow: 0 0 10px #000;
+        background-color: rgba(246, 226, 11, 0.645);
+      }
+
+      .hero-buttons {
+        display: flex;
+        justify-content: center; // Center the buttons horizontally
+        margin-top: 1rem; // Add margin between text and buttons
+        a {
+          background-color: rgb(13, 8, 51); // Set the background color of the button
+          color: darkorange; // Set the text color of the button
+          padding: 10px 20px; // Add padding to the button
+          border: none; // Remove the button border
+          cursor: pointer; // Set cursor to pointer on hover
+         
+          &:hover {
+            background-color: rgb(235, 10, 44)
+          }
+        }
+      }
+    }
+
+    .hero-image {
+     // width: 30%; /* Adjust the initial width as needed */
+     width: 30%;
+     height: auto;
+     border-radius: 8px;
+     border: 2px solid #333; /* Border style and color */
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Box shadow for depth effect */
+     transition: all 0.3s ease; /* Smooth transition for hover effects */
+
+     &:hover {
+      transform: scale(1.05); /* Scale up the image on hover */
+      border-color: #ffcc00; /* Change border color on hover */
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Modify box shadow on hover */
+    }
+      
+    }
+      
+      
+      
+  }
+
+  @media screen and (max-width: 600px) {
+    .navbar {
+      flex-direction: column;
+      align-items: flex-end;
+
+      .menu {
+        justify-content: flex-start;
+        margin-top: 1rem;
+      }
+    }
+
+    .hero {
+      flex-direction: column;
+      text-align: center;
+
+      .hero-text {
+        width: 100%;
+      }
+
+      // .hero-image {
+      //    width: 50%; /* Adjust the width for smaller screens */
+      //   //  height: auto;
+      //   //  border-radius: 8px;
+      // }
+      .hero-image {
+        width: 100%;
+        &img {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
