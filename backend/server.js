@@ -1,4 +1,4 @@
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://thekitabkorner-3wjd0k5qu-saurabh-mhamunkars-projects.vercel.app","https://thekitabkorner.vercel.app"],
+    origin: ["http://localhost:3000","https://thekitabkorner.vercel.app"],
     credentials: true,
   })
 );
