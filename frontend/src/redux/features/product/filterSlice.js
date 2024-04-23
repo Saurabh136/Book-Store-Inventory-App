@@ -10,11 +10,15 @@ const filterSlice = createSlice({
   reducers: {
     FILTER_PRODUCTS(state, action) {
       const { products, search } = action.payload;
-      const tempProducts = products.filter(
-        (product) =>
-          product.title.toLowerCase().includes(search.toLowerCase()) ||
-          product.genre.toLowerCase().includes(search.toLowerCase())
-      );
+      
+      const tempProducts = products.filter((product) => {
+        const titleLower = product.title ? product.title.toLowerCase() : "";
+        const genreLower = product.genre ? product.genre.toLowerCase() : "";
+        return (
+          titleLower.includes(search.toLowerCase()) ||
+          genreLower.includes(search.toLowerCase())
+        );
+      });
 
       state.filteredProducts = tempProducts;
     },
@@ -23,6 +27,6 @@ const filterSlice = createSlice({
 
 export const { FILTER_PRODUCTS } = filterSlice.actions;
 
-export const selectFilteredPoducts = (state) => state.filter.filteredProducts;
+export const selectFilteredProducts = (state) => state.filter.filteredProducts;
 
 export default filterSlice.reducer;
