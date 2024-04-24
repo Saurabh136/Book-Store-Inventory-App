@@ -30,7 +30,7 @@ const filterSlice = createSlice({
           titleLower.includes(search.toLowerCase()) ||
           genreLower.includes(search.toLowerCase()) ||
           seriesLower.includes(search.toLowerCase()) ||
-          serialNumberLower.includes(search.toLowerCase()) ||
+          serialNumberLower.toString().includes(search.toLowerCase()) ||
           primaryAuthorLower.includes(search.toLowerCase()) ||
           secondaryAuthorLower.includes(search.toLowerCase()) ||
           editorLower.includes(search.toLowerCase()) ||
