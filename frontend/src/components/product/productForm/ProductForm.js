@@ -61,7 +61,7 @@ const ProductForm = ({
 
           <label>Product Price:</label>
           <input
-            type="text"
+            type="number"
             placeholder="Book Price"
             name="price"
             value={product?.price}
@@ -70,7 +70,7 @@ const ProductForm = ({
 
           <label>Product Quantity:</label>
           <input
-            type="text"
+            type="number"
             placeholder="Book Quantity"
             name="quantity"
             value={product?.quantity}
@@ -86,7 +86,7 @@ const ProductForm = ({
           />
           <label>Product Serial Number:</label>
           <input
-            type="text"
+            type="number"
             placeholder="Book Serial Number"
             name="serialnumber"
             value={product?.serialnumber}

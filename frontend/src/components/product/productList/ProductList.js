@@ -25,6 +25,7 @@ const ProductList = ({ products, isLoading }) => {
   const dispatch = useDispatch();
 
   const shortenText = (text, n) => {
+    if (!text) return ""; // Check for null or undefined text
     if (text.length > n) {
       const shortenedText = text.substring(0, n).concat("...");
       return shortenedText;
@@ -120,17 +121,17 @@ const ProductList = ({ products, isLoading }) => {
                     <tr key={_id}>
                       <td>{index + 1}</td>
                       <td>{shortenText(title, 16)}</td>
-                      <td>{genre}</td>
+                      <td>{genre || "-"}</td> {/* Display "-" for empty or undefined genre */}
                       <td>
                         {"₹"}
-                        {price}
+                        {price || 0} {/* Display 0 for empty or undefined price */}
                       </td>
                       <td>
-                        {quantity}
+                        {quantity || 0} {/* Display 0 for empty or undefined quantity */}
                       </td>
                       <td>
                         {"₹"}
-                        {price * quantity}
+                        {(price || 0) * (quantity || 0)} {/* Calculate value with defaults */}
                       </td>
                       <td className="icons">
                         <span>

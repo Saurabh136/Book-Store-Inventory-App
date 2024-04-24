@@ -67,10 +67,10 @@ const ProductDetail = () => {
             </p>
             <p>
               <b>&rarr; Price : </b> {"₹"}
-              {product.price}
+              {Number(product.price)}
             </p>
             <p>
-              <b>&rarr; Quantity in stock : </b> {product.quantity}
+              <b>&rarr; Quantity in stock : </b> {Number(product.quantity)}
             </p>
             <p>
               <b>&rarr; Total Value in stock : </b> {"₹"}

@@ -62,9 +62,9 @@ const AddProduct = () => {
     formData.append("sku", generateKSKU(genre));
     formData.append("genre", genre);
     formData.append("quantity", Number(quantity));
-    formData.append("price", price);
+    formData.append("price", Number(price));
     formData.append("series", series);
-    formData.append("serialnumber", serialnumber);
+    formData.append("serialnumber", Number(serialnumber));
     formData.append("primaryauthor", primaryauthor);
     formData.append("secondaryauthor", secondaryauthor);
     formData.append("editor", editor);

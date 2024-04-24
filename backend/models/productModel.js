@@ -24,12 +24,12 @@ const productSchema = mongoose.Schema(
       trim: true,
     },
     quantity: {
-      type: String,
+      type: Number,
       required: [true, "Please add a quantity"],
       trim: true,
     },
     price: {
-      type: String,
+      type: Number,
       required: [true, "Please add a price"],
       trim: true,
     },
@@ -39,7 +39,7 @@ const productSchema = mongoose.Schema(
       trim: true,
     },
     serialnumber: {
-      type: String,
+      type: Number,
       required: [true, "Please add Series Serial number"],
       trim: true,
     },
