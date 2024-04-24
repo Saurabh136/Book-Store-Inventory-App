@@ -40,59 +40,50 @@ const productSchema = mongoose.Schema(
     },
     series: {
       type: String,
-      required: [true, "Please add Series name"],
       default: "N/A" ,
       trim: true,      
     },
     serialnumber: {
       type: Number,
-      required: [true, "Please add Series Serial number"],
       default: 0,
       trim: true,
     },
     primaryauthor: {
       type: String,
-      required: [true, "Please add Primary Author"],
       default: "N/A",
       trim: true, 
     },
     secondaryauthor: {
       type: String,
-      required: [true, "Please add a Secondary Author"],
       default: "N/A" ,
       trim: true,
     },
     editor: {
       type: String,
-      required: [true, "Please add a Editor"],
       default: "N/A",
       trim: true,
        
     },
     publisher: {
       type: String,
-      required: [true, "Please add a Publisher"],
       default: "N/A",
       trim: true,
       
     },
     edition: {
       type: String,
-      required: [true, "Please add a Edition"],
       default: "N/A",
       trim: true,
        
     },
     description: {
       type: String,
-      required: [true, "Please add a description"],
       default: "N/A",
       trim: true,
        
     },
     condition: {
       type: String,
-      required: [true, "Please add book condition"],
       default: "N/A",
       trim: true,
        
