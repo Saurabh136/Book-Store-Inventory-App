@@ -15,7 +15,8 @@ const filterSlice = createSlice({
         const titleLower = (product.title && typeof product.title === "string") ? product.title.toLowerCase() : "";
         const genreLower = (product.genre && typeof product.genre === "string") ? product.genre.toLowerCase() : "";
         const seriesLower = (product.series && typeof product.series === "string") ? product.series.toLowerCase() : "";
-        const serialNumberLower = (product.serialnumber && typeof product.serialnumber === "number") ? product.serialnumber.toLowerCase() : "";
+        const serialNumberLower = (product.serialnumber && typeof product.serialnumber === "number") ? product.serialnumber.toString() : "";
+
         const primaryAuthorLower = (product.primaryauthor && typeof product.primaryauthor === "string") ? product.primaryauthor.toLowerCase() : "";
         const secondaryAuthorLower = (product.secondaryauthor && typeof product.secondaryauthor === "string") ? product.secondaryauthor.toLowerCase() : "";
         const editorLower = (product.editor && typeof product.editor === "string") ? product.editor.toLowerCase() : "";
