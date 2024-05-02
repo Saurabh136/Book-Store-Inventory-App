@@ -3,6 +3,46 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import productService from "./productService";
 import { toast } from "react-toastify";
 
+// Fetch product titles
+export const getProductTitles = createAsyncThunk(
+  "products/getProductTitles",
+  async (_, thunkAPI) => {
+    try {
+      const products = await productService.getProducts();
+      const titles = products.map((product) => product.title);
+      return titles;
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      console.log(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Sell a Book Async Thunk Action
+export const sellBook = createAsyncThunk(
+  "products/sellBook",
+  async ({id,formData}, thunkAPI) => {
+    try {
+      return await productService.sellBook(id,formData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      console.log(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 
 
 const initialState = {
@@ -15,6 +55,7 @@ const initialState = {
   totalStoreValue: 0,
   outOfStock: 0,
   genre: [],
+  productTitles: [], // Add productTitles to store fetched titles
   
 };
 
@@ -250,6 +291,23 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
+      .addCase(sellBook.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(sellBook.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        console.log(action.payload);
+        // You may update state or perform additional actions here upon successful sellBook
+        toast.success("Book sold successfully");
+      })
+      .addCase(sellBook.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      });
     },
 });      
 
@@ -264,6 +322,7 @@ export const selectProduct = (state) => state.product.product;
 export const selectTotalStoreValue = (state) => state.product.totalStoreValue;
 export const selectOutOfStock = (state) => state.product.outOfStock;
 export const selectGenre = (state) => state.product.genre;
+export const selectProductTitles = (state) => state.product.productTitles; // Selector for product titles
 
 
 

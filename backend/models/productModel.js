@@ -31,6 +31,10 @@ const productSchema = mongoose.Schema(
       required: [true, "Please add a quantity"],
       default: 0, 
       trim: true,
+      validate: {
+        validator: (value) => value >= -999 && value <= 999, // Custom validation for quantity range
+        message: "Quantity must be between -999 and 999",
+      },
     },
     price: {
       type: Number,
