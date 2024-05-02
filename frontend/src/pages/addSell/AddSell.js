@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/loader/Loader";
-import SellForm from "../../components/sell/SellForm"; // Create SellForm component
+import SellForm from "../../components/sell/SellForm";
 import { sellBook, selectIsLoading } from "../../redux/features/product/productSlice";
 
 const initialState = {
@@ -25,7 +25,7 @@ const AddSell = () => {
   const sellBookHandler = async (e) => {
     e.preventDefault();
     await dispatch(sellBook(sellData)); // Assume sellBook action is implemented in productSlice.js
-    navigate("/dashboard"); // Redirect to dashboard after selling book
+    navigate("/dashboard");
   };
 
   return (
