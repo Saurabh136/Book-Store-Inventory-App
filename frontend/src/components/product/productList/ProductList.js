@@ -134,6 +134,7 @@ const ProductList = ({ products, isLoading }) => {
                         {(price || 0) * (quantity || 0)} {/* Calculate value with defaults */}
                       </td>
                       <td className="icons">
+                        
                         <span>
                           <Link to={`/product-detail/${_id}`}>
                             <AiOutlineEye size={25} color={"purple"} />

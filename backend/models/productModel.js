@@ -22,7 +22,7 @@ const productSchema = mongoose.Schema(
     },
     genre: {
       type: String,
-      required: [true, "Please add a genre"],
+     // required: [true, "Please add a genre"],
       default: "N/A" ,
       trim: true,
     },

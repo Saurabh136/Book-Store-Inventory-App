@@ -4,11 +4,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const API_URL = `${BACKEND_URL}/api/products/`;
 
-// Sell a Book
-export const sellBook = async (id, formData) => {
-  const response = await axios.post(`${API_URL}/sell/${id}`, formData);
-  return response.data;
-};
+
 
 // Create New Product
 const createProduct = async (formData) => {
@@ -46,7 +42,6 @@ const productService = {
   getProduct,
   deleteProduct,
   updateProduct,
-  sellBook,
 };
 
 export default productService;

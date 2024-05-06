@@ -24,29 +24,13 @@ export const getProductTitles = createAsyncThunk(
   }
 );
 
-// Sell a Book Async Thunk Action
-export const sellBook = createAsyncThunk(
-  "products/sellBook",
-  async ({id,formData}, thunkAPI) => {
-    try {
-      return await productService.sellBook(id,formData);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      console.log(message);
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
+
 
 
 
 const initialState = {
   product: null,
+  error: null,
   products: [],
   isError: false,
   isSuccess: false,
@@ -205,8 +189,7 @@ const productSlice = createSlice({
       const uniqueGenre = [...new Set(array)];
       state.genre = uniqueGenre;
     },
-   
-   
+
   },
 
    
@@ -291,23 +274,7 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-      .addCase(sellBook.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(sellBook.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.isError = false;
-        console.log(action.payload);
-        // You may update state or perform additional actions here upon successful sellBook
-        toast.success("Book sold successfully");
-      })
-      .addCase(sellBook.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
-        toast.error(action.payload);
-      });
+     
     },
 });      
 

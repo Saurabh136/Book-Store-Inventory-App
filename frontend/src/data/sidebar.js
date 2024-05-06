@@ -1,6 +1,6 @@
 import { FaTh, FaRegChartBar} from "react-icons/fa";
 import { BiImageAdd } from "react-icons/bi";
-import { FcSalesPerformance } from "react-icons/fc";
+//import { FcSalesPerformance } from "react-icons/fc";
 
 const menu = [
   {
@@ -13,11 +13,7 @@ const menu = [
     icon: <BiImageAdd />,
     path: "/add-product",
   },
-  {
-    title: "Add Sell",
-    icon: <FcSalesPerformance />,
-    path: "/add-Sell",
-  },
+ 
   {
     title: "Account",
     icon: <FaRegChartBar />,

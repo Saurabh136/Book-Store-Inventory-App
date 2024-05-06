@@ -9,47 +9,15 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Sell Book
-const sellBook = asyncHandler(async (req, res) => {
-  const { title, quantitySold, price } = req.body;
 
-  // Validate request data
-  if (!title || !quantitySold || !price) {
-    res.status(400).json({ error: "Title, quantity sold, and price are required." });
-    return;
-  }
 
-  try {
-    // Check if the book exists
-    let book = await Product.findOne({ title });
-
-    if (!book) {
-      // If the book doesn't exist, add a new entry with negative quantity for sale
-      book = await Product.create({
-        user: req.user.id,
-        title,
-        quantity: -quantitySold, // Negative quantity for sale
-        price,
-      });
-    } else {
-      // If the book exists, update its quantity and price
-      book.quantity -= quantitySold; // Reduce quantity for sale
-      book.price = price; // Update price
-      await book.save();
-    }
-
-    res.status(200).json({ success: true, data: book });
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 
 // Create Prouct
 const createProduct = asyncHandler(async (req, res) => {
   const { title, sku, genre, quantity, price,series,serialnumber,primaryauthor,secondaryauthor,editor,publisher,edition, description,condition } = req.body;
 
   //   Validation
-  if (!title || !genre || !quantity || !price ) {
+  if (!title || !quantity || !price ) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
@@ -237,5 +205,4 @@ module.exports = {
   getProduct,
   deleteProduct,
   updateProduct,
-  sellBook,
 };
