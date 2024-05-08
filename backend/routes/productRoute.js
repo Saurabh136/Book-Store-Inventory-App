@@ -7,6 +7,7 @@ const {
   getProduct,
   deleteProduct,
   updateProduct,
+  sellBook, // Import sellBook controller
 } = require("../controllers/productController");
 const { upload } = require("../utils/fileUpload");
 
@@ -15,6 +16,8 @@ router.patch("/:id", protect, upload.single("image"), updateProduct);
 router.get("/", protect, getProducts);
 router.get("/:id", protect, getProduct);
 router.delete("/:id", protect, deleteProduct);
+// Sell Book Route
+router.post("/sell/:id", protect, sellBook);
 
 
 

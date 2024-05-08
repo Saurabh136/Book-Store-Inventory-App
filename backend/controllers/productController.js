@@ -6,18 +6,30 @@ const cloudinary = require("cloudinary").v2;
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
-
-
-// Create Prouct
+// Create Product
 const createProduct = asyncHandler(async (req, res) => {
-  const { title, sku, genre, quantity, price,series,serialnumber,primaryauthor,secondaryauthor,editor,publisher,edition, description,condition } = req.body;
+  const {
+    title,
+    sku,
+    genre,
+    quantity,
+    price,
+    series,
+    serialnumber,
+    primaryauthor,
+    secondaryauthor,
+    editor,
+    publisher,
+    edition,
+    description,
+    condition,
+  } = req.body;
 
-  //   Validation
-  if (!title || !quantity || !price ) {
+  // Validation
+  if (!title || !quantity || !price) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
@@ -77,7 +89,7 @@ const getProducts = asyncHandler(async (req, res) => {
 // Get single product
 const getProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
-  // if product doesnt exist
+  // if product doesn't exist
   if (!product) {
     res.status(404);
     throw new Error("Product not found");
@@ -93,7 +105,7 @@ const getProduct = asyncHandler(async (req, res) => {
 // Delete Product
 const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
-  // if product doesnt exist
+  // if product doesn't exist
   if (!product) {
     res.status(404);
     throw new Error("Product not found");
@@ -109,12 +121,11 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 // Update Product
 const updateProduct = asyncHandler(async (req, res) => {
-  //const { title, genre, quantity, price,series,serialnumber,primaryauthor,secondaryauthor,editor,publisher,edition, description,condition } = req.body;
   const { id } = req.params;
 
   const product = await Product.findById(id);
 
-  // if product doesnt exist
+  // if product doesn't exist
   if (!product) {
     res.status(404);
     throw new Error("Product not found");
@@ -125,25 +136,9 @@ const updateProduct = asyncHandler(async (req, res) => {
     throw new Error("User not authorized");
   }
 
-  const updatedFields = {};
-  if (req.body.title !== undefined) updatedFields.title = req.body.title;
-  if (req.body.sku !== undefined) updatedFields.sku = req.body.sku;
-  if (req.body.genre !== undefined) updatedFields.genre = req.body.genre;
-  if (req.body.quantity !== undefined) updatedFields.quantity = req.body.quantity;
-  if (req.body.price !== undefined) updatedFields.price = req.body.price;
-  if (req.body.series !== undefined) updatedFields.series = req.body.series;
-  if (req.body.serialnumber !== undefined) updatedFields.serialnumber = req.body.serialnumber;
-  if (req.body.primaryauthor !== undefined) updatedFields.primaryauthor = req.body.primaryauthor;
-  if (req.body.secondaryauthor !== undefined) updatedFields.secondaryauthor = req.body.secondaryauthor;
-  if (req.body.editor !== undefined) updatedFields.editor = req.body.editor;
-  if (req.body.publisher !== undefined) updatedFields.publisher = req.body.publisher;
-  if (req.body.edition !== undefined) updatedFields.edition = req.body.edition;
-  if (req.body.description !== undefined) updatedFields.description = req.body.description;
-  if (req.body.condition !== undefined) updatedFields.condition = req.body.condition;
-
+  const updatedFields = { ...req.body };
 
   // Handle Image upload
-  //let fileData = {};
   if (req.file) {
     // Save image to cloudinary
     let uploadedFile;
@@ -157,7 +152,7 @@ const updateProduct = asyncHandler(async (req, res) => {
       throw new Error("Image could not be uploaded");
     }
 
-    /*fileData*/updatedFields.image = {
+    updatedFields.image = {
       fileName: req.file.originalname,
       filePath: uploadedFile.secure_url,
       fileType: req.file.mimetype,
@@ -167,25 +162,8 @@ const updateProduct = asyncHandler(async (req, res) => {
 
   // Update Product
   const updatedProduct = await Product.findByIdAndUpdate(
-    //{ _id: id },
     id,
     { $set: updatedFields },
-    // {
-    //   title,
-    //   genre,
-    //   quantity,
-    //   price,
-    //   series,
-    //   serialnumber,
-    //   primaryauthor,
-    //   secondaryauthor,
-    //   editor,
-    //   publisher,
-    //   edition,
-    //   description,
-    //   condition,
-    //   image: Object.keys(fileData).length === 0 ? product?.image : fileData,
-    // },
     {
       new: true,
       runValidators: true,
@@ -195,9 +173,28 @@ const updateProduct = asyncHandler(async (req, res) => {
   res.status(200).json(updatedProduct);
 });
 
+// Sell Book
+const sellBook = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
 
+  const product = await Product.findById(id);
 
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
 
+  if (product.quantity < quantity) {
+    res.status(400);
+    throw new Error("Not enough stock available");
+  }
+
+  product.quantity -= quantity;
+  await product.save();
+
+  res.status(200).json({ message: "Book sold successfully", product });
+});
 
 module.exports = {
   createProduct,
@@ -205,4 +202,6 @@ module.exports = {
   getProduct,
   deleteProduct,
   updateProduct,
+  sellBook, // Add sellBook to exports
 };
+

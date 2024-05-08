@@ -24,6 +24,26 @@ export const getProductTitles = createAsyncThunk(
   }
 );
 
+// Sell a book
+export const sellBook = createAsyncThunk(
+  "products/sellBook",
+  async (formData, thunkAPI) => {
+    try {
+      return await productService.sellBook(formData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      console.log(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
 
 
 
@@ -274,6 +294,24 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
+      .addCase(getProductTitles.fulfilled, (state, action) => {
+        state.productTitles = action.payload;
+      })
+      .addCase(sellBook.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(sellBook.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        toast.success("Book sold successfully");
+      })
+      .addCase(sellBook.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      });
      
     },
 });      

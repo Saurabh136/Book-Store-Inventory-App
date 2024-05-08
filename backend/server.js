@@ -16,7 +16,12 @@ mongoose.set('strictQuery', false);
 
 // Middlewares
 app.use(express.json());
-app.use(cookieParser());
+//app.use(cookieParser());
+app.use(cookieParser("thekitabkorner", {
+  sameSite: "None",
+  secure: true,
+  httpOnly: true,
+}));
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
@@ -25,6 +30,10 @@ app.use(
     credentials: true,
   })
 );
+
+
+// Trusting proxy for HTTPS (if applicable)
+app.set('trust proxy', 1);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

@@ -20,8 +20,10 @@ import EditProduct from "./pages/editProduct/EditProduct";
 import Profile from "./pages/profile/Profile";
 import EditProfile from "./pages/profile/EditProfile";
 import Contact from "./pages/contact/Contact";
+import SellForm from "./components/sell/SellForm"; // Import SellForm component
 
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 function App() {
   const dispatch = useDispatch();
@@ -64,6 +66,16 @@ function App() {
             </Sidebar>
           }
         />
+        <Route 
+            path="/add-sell" 
+            element={
+              <Sidebar>
+                <Layout>
+                  <SellForm />
+                </Layout>
+              </Sidebar>
+            } 
+          /> 
          
         <Route
           path="/product-detail/:id"

@@ -34,6 +34,12 @@ const updateProduct = async (id, formData) => {
   return response.data;
 };
 
+// Sell a Book
+const sellBook = async (id, quantity) => {
+  const response = await axios.post(`${API_URL}sell/${id}`, { quantity });
+  return response.data;
+};
+
 
 
 const productService = {
@@ -42,6 +48,7 @@ const productService = {
   getProduct,
   deleteProduct,
   updateProduct,
+  sellBook,
 };
 
 export default productService;
