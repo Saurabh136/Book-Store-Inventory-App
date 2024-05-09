@@ -177,6 +177,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 const sellBook = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
+  console.log("Received request to sell book:", id, quantity); 
 
   const product = await Product.findById(id);
 
