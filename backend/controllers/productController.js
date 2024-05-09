@@ -29,7 +29,7 @@ const createProduct = asyncHandler(async (req, res) => {
   } = req.body;
 
   // Validation
-  if (!title || !quantity || !price) {
+  if (!title || !quantity) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
