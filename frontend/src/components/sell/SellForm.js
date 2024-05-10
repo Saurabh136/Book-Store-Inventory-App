@@ -1,42 +1,46 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState} from "react";
+
 import { useForm } from "react-hook-form";
 import productService from "../../redux/features/product/productService"; // Import your productService
 import "./SellForm.scss"; // Import the SCSS file
+import { useNavigate} from "react-router-dom"; // Import useHistory from React Router
 
 const SellForm = () => {
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
   const { register, handleSubmit } = useForm();
   const [bookTitle, setBookTitle] = useState("");
   const [quantity, setQuantity] = useState(1); // Default quantity is 1
   const [price, setPrice] = useState(0); // Default price is 0
 
-    // Fetch all products from Redux store
-    const products = useSelector((state) => state.products);
+    
 
-    // Effect to update price when book title changes
-    useEffect(() => {
-      const existingProduct = products.find(product => product.title === bookTitle);
-      if (existingProduct) {
-        // If book title exists, set the price from the existing product
-        setPrice(existingProduct.price);
-      } else {
-        // If book title is new, reset the price to 0
-        setPrice(0);
-      }
-    }, [bookTitle, products]);
+  const handleBookTitleChange = async (e) => {
+    const title = e.target.value;
+    setBookTitle(title);
+    const products = await productService.getProducts(); // Fetch all products
+    const existingProduct = products.find(product => product.title === title); // Check if book title exists
 
-  const handleBookTitleChange = (e) => {
-    setBookTitle(e.target.value);
+    if (existingProduct) {
+      setPrice(existingProduct.price); // Set price if book exists
+    } else {
+      setPrice(0); // Reset price if book is new
+    }
   };
+
+  // const handleBookTitleChange = (e) => {
+  //   setBookTitle(e.target.value);
+  // };
 
   const handleQuantityChange = (e) => {
     setQuantity(e.target.value);
   };
 
   const handlePriceChange = (e) => {
-    setPrice(e.target.value);
+    setPrice(parseFloat(e.target.value)); // Convert input to float
   };
+
+  
 
 
   // const handleSellBook = async (title, quantity) => {
@@ -64,9 +68,12 @@ const SellForm = () => {
       await productService.updateProduct(existingProduct._id, { quantity: updatedQuantity });
     } else {
       // If the book title is new, add it with negative quantity
-      await productService.createProduct({ title, quantity: -quantity });
+      await productService.createProduct({ title, quantity: -quantity,price });
     }
     console.log("Book sold successfully"); // Add a success message
+
+    // Redirect to dashboard after successful sell
+    navigate("/dashboard");
 
     // Handle success, e.g., show a success message or update UI
   } catch (error) {
@@ -78,8 +85,8 @@ const SellForm = () => {
 
   const onSubmit = (data) => {
     console.log("Form submitted with data:", data); // Add this line
-    const { bookTitle, quantity, price } = data;
-    handleSellBook(bookTitle, quantity, price);
+    const { bookTitle, quantity,price} = data;
+    handleSellBook(bookTitle, quantity,price);
     // You can add redirection or other actions after selling the book
   };
 
@@ -105,17 +112,16 @@ const SellForm = () => {
             onChange={handleQuantityChange}
           />
         </div>
-        {price !== 0 && ( // Render price field only if price is not 0
-          <div>
-            <label>Price:</label>
-            <input
-              type="number"
-              {...register("price")}
-              value={price}
-              onChange={handlePriceChange}
-            />
-          </div>
-        )}
+        <div>
+          <label>Price:</label>
+          <input
+            type="number"
+            {...register("price")}
+            value={price}
+            onChange={handlePriceChange}
+          />
+        </div>
+       
         <button type="submit">Sell</button>
       </form>
     </div>

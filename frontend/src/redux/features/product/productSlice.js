@@ -27,9 +27,9 @@ export const getProductTitles = createAsyncThunk(
 // Sell a book
 export const sellBook = createAsyncThunk(
   "products/sellBook",
-  async (formData, thunkAPI) => {
+  async ({formData,price}, thunkAPI) => {
     try {
-      return await productService.sellBook(formData);
+      return await productService.sellBook({...formData,price});
     } catch (error) {
       const message =
         (error.response &&
@@ -60,6 +60,7 @@ const initialState = {
   outOfStock: 0,
   genre: [],
   productTitles: [], // Add productTitles to store fetched titles
+  totalSales: 0, // Add totalSales to track total sales amount
   
 };
 
@@ -168,6 +169,7 @@ const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
+    
 
     CALC_STORE_VALUE(state, action) {
       const products = action.payload;
@@ -209,6 +211,9 @@ const productSlice = createSlice({
       const uniqueGenre = [...new Set(array)];
       state.genre = uniqueGenre;
     },
+    // CALC_TOTAL_SALES(state, action) {
+    //   state.totalSales += action.payload.price; // Assuming price is the amount of the sale
+    // },
 
   },
 
@@ -247,6 +252,7 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+        state.error = action.payload; // Handle error if fetching products fails
         toast.error(action.payload);
       })
       .addCase(deleteProduct.pending, (state) => {
@@ -264,21 +270,21 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-      .addCase(getProduct.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getProduct.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.isError = false;
-        state.product = action.payload;
-      })
-      .addCase(getProduct.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
-        toast.error(action.payload);
-      })
+      // .addCase(getProduct.pending, (state) => {
+      //   state.isLoading = true;
+      // })
+      // .addCase(getProduct.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   state.isSuccess = true;
+      //   state.isError = false;
+      //   state.product = action.payload;
+      // })
+      // .addCase(getProduct.rejected, (state, action) => {
+      //   state.isLoading = false;
+      //   state.isError = true;
+      //   state.message = action.payload;
+      //   toast.error(action.payload);
+      // })
       .addCase(updateProduct.pending, (state) => {
         state.isLoading = true;
       })
@@ -304,6 +310,7 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
+        state.totalSales += action.payload.price; // Assuming price is the amount of the sale
         toast.success("Book sold successfully");
       })
       .addCase(sellBook.rejected, (state, action) => {
@@ -314,7 +321,10 @@ const productSlice = createSlice({
       });
      
     },
-});      
+});  
+
+// Selector to get total sales amount from the Redux store
+export const selectTotalSales = (state) => state.product.totalSales;
 
 export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_GENRE} =
   productSlice.actions;

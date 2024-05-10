@@ -176,7 +176,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 // Sell Book
 const sellBook = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { quantity,price } = req.body;
+  const { quantity,price} = req.body;
   console.log("Received request to sell book:", id, quantity,price); 
 
   const product = await Product.findById(id);
@@ -191,13 +191,15 @@ const sellBook = asyncHandler(async (req, res) => {
     throw new Error("Not enough stock available");
   }
 
-  // Calculate total price based on quantity and unit price
-  const totalPrice = quantity * price;
+ 
 
   product.quantity -= quantity;
+  if (price !== undefined) {
+    product.price = price;
+  }
   await product.save();
 
-  res.status(200).json({ message: "Book sold successfully",totalPrice, product });
+  res.status(200).json({ message: "Book sold successfully",product });
 });
 
 module.exports = {

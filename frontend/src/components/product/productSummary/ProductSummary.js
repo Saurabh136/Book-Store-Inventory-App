@@ -1,19 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import "./ProductSummary.scss";
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import { BsCart4, BsCartX } from "react-icons/bs";
 import { BiCategory } from "react-icons/bi";
-//import { FcSalesPerformance } from "react-icons/fc";
+import { FcSalesPerformance } from "react-icons/fc";
 import InfoBox from "../../infoBox/InfoBox";
 import { useDispatch, useSelector } from "react-redux";
 import {
   CALC_GENRE,
   CALC_OUTOFSTOCK,
   CALC_STORE_VALUE,
+  //CALC_TOTAL_SALES, // Add this import
   
   selectGenre,
   selectOutOfStock,
   selectTotalStoreValue,
+  selectTotalSales, // Add this import
 } from "../../../redux/features/product/productSlice";
 
 
@@ -22,7 +24,7 @@ const earningIcon = <FaIndianRupeeSign size={40} color="#fff" />;
 const productIcon = <BsCart4 size={40} color="#fff" />;
 const genreIcon = <BiCategory size={40} color="#fff" />;
 const outOfStockIcon = <BsCartX size={40} color="#fff" />;
-//const salesIcon = <FcSalesPerformance size={40} color="#fff" />; // New icon for total sales
+const salesIcon = <FcSalesPerformance size={40} color="#fff" />; // New icon for total sales
 
 // Format Amount
 export const formatNumbers = (x) => {
@@ -35,14 +37,18 @@ const ProductSummary = ({ products }) => {
   const totalStoreValue = useSelector(selectTotalStoreValue);
   const outOfStock = useSelector(selectOutOfStock);
   const genre = useSelector(selectGenre);
+  const totalSales = useSelector(selectTotalSales); // Add this line
 
   useEffect(() => {
     
     dispatch(CALC_STORE_VALUE(products));
     dispatch(CALC_OUTOFSTOCK(products));
     dispatch(CALC_GENRE(products));
+    //dispatch(CALC_TOTAL_SALES(products)); // Add this line
     
   }, [dispatch, products]);
+
+  const memoizedTotalSales = useMemo(() => totalSales, [totalSales]); // Memoize the totalSales value
   
 
   return (
@@ -73,12 +79,12 @@ const ProductSummary = ({ products }) => {
           count={genre.length}
           bgColor="card4"
         />
-          {/* <InfoBox
+           <InfoBox
           icon={salesIcon} // Use the sales icon
           title={"Total Sales"} // New title for total sales
-          count={`₹${formatNumbers(totalSales)}`} // Display total sales value
+          count={`₹${formatNumbers(memoizedTotalSales)}`} // Display total sales value
           bgColor="card5" // You can define a new background color for the Total Sales card
-        />   */}
+        />   
         
       </div>
     </div>
