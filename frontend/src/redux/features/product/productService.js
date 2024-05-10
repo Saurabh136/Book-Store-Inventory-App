@@ -35,8 +35,8 @@ const updateProduct = async (id, formData) => {
 };
 
 // Sell a Book
-const sellBook = async (id, quantity) => {
-  const response = await axios.post(`${API_URL}sell/${id}`, { quantity });
+const sellBook = async (id, quantity,price) => {
+  const response = await axios.post(`${API_URL}sell/${id}`, { quantity },{price});
   return response.data;
 };
 
