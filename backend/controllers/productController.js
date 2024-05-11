@@ -199,7 +199,7 @@ const sellBook = asyncHandler(async (req, res) => {
   }
   await product.save();
 
-  res.status(200).json({ message: "Book sold successfully",product });
+  res.status(200).json({ message: "Book sold successfully",price: product.price /*product*/ });
 });
 
 module.exports = {

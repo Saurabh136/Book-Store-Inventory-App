@@ -10,7 +10,7 @@ import {
   CALC_GENRE,
   CALC_OUTOFSTOCK,
   CALC_STORE_VALUE,
-  //CALC_TOTAL_SALES, // Add this import
+  CALC_TOTAL_SALES, // Add this import
   
   selectGenre,
   selectOutOfStock,

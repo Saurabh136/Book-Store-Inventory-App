@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import productService from "./productService";
 import { toast } from "react-toastify";
+import { createSelector } from "reselect"; // Import createSelector from reselect
 
 // Fetch product titles
 export const getProductTitles = createAsyncThunk(
@@ -211,9 +212,9 @@ const productSlice = createSlice({
       const uniqueGenre = [...new Set(array)];
       state.genre = uniqueGenre;
     },
-    // CALC_TOTAL_SALES(state, action) {
-    //   state.totalSales += action.payload.price; // Assuming price is the amount of the sale
-    // },
+    //  CALC_TOTAL_SALES(state, action) {
+    //    state.totalSales += action.payload.price; // Assuming price is the amount of the sale
+    //  },
 
   },
 
@@ -270,21 +271,21 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-      // .addCase(getProduct.pending, (state) => {
-      //   state.isLoading = true;
-      // })
-      // .addCase(getProduct.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   state.isSuccess = true;
-      //   state.isError = false;
-      //   state.product = action.payload;
-      // })
-      // .addCase(getProduct.rejected, (state, action) => {
-      //   state.isLoading = false;
-      //   state.isError = true;
-      //   state.message = action.payload;
-      //   toast.error(action.payload);
-      // })
+      .addCase(getProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.product = action.payload;
+      })
+      .addCase(getProduct.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
       .addCase(updateProduct.pending, (state) => {
         state.isLoading = true;
       })
@@ -324,7 +325,11 @@ const productSlice = createSlice({
 });  
 
 // Selector to get total sales amount from the Redux store
-export const selectTotalSales = (state) => state.product.totalSales;
+// Memoized selector using createSelector from reselect
+export const selectTotalSales = createSelector(
+  (state) => state.product.totalSales,
+  (totalSales) => totalSales
+);
 
 export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_GENRE} =
   productSlice.actions;

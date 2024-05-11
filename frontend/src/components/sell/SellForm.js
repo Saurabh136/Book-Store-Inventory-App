@@ -72,6 +72,7 @@ const SellForm = () => {
     }
     console.log("Book sold successfully"); // Add a success message
 
+
     // Redirect to dashboard after successful sell
     navigate("/dashboard");
 
@@ -88,6 +89,8 @@ const SellForm = () => {
     const { bookTitle, quantity,price} = data;
     handleSellBook(bookTitle, quantity,price);
     // You can add redirection or other actions after selling the book
+     // Redirect to dashboard after successful sell
+     navigate("/dashboard");
   };
 
   return (
