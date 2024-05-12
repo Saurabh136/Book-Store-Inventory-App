@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "ansi-html": "^0.0.9",
     "axios": "^1.6.8",
+    "debug": "^4.3.4",
     "dompurify": "^2.4.0",
     "react": "^18.2.0",
     "react-confirm-alert": "^3.0.6",
@@ -23,6 +24,7 @@
     "react-toastify": "^10.0.5",
     "reselect": "^5.1.0",
     "sass": "^1.72.0",
+    "uuid": "^9.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
