@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import productService from "./productService";
 import { toast } from "react-toastify";
-import { createSelector } from "reselect"; // Import createSelector from reselect
+
 
 // Fetch product titles
 export const getProductTitles = createAsyncThunk(
@@ -30,7 +30,9 @@ export const sellBook = createAsyncThunk(
   "products/sellBook",
   async ({formData,price}, thunkAPI) => {
     try {
-      return await productService.sellBook({...formData,price});
+      const response = await productService.sellBook({...formData,price});
+      
+       return response;
     } catch (error) {
       const message =
         (error.response &&
@@ -49,6 +51,11 @@ export const sellBook = createAsyncThunk(
 
 
 
+
+
+
+
+
 const initialState = {
   product: null,
   error: null,
@@ -61,7 +68,7 @@ const initialState = {
   outOfStock: 0,
   genre: [],
   productTitles: [], // Add productTitles to store fetched titles
-  totalSales: 0, // Add totalSales to track total sales amount
+  totalSales: 0, // Add a new property for total sales
   
 };
 
@@ -166,6 +173,7 @@ export const updateProduct = createAsyncThunk(
 
 
 
+
 const productSlice = createSlice({
   name: "product",
   initialState,
@@ -212,9 +220,13 @@ const productSlice = createSlice({
       const uniqueGenre = [...new Set(array)];
       state.genre = uniqueGenre;
     },
-    //  CALC_TOTAL_SALES(state, action) {
-    //    state.totalSales += action.payload.price; // Assuming price is the amount of the sale
-    //  },
+
+     // Add a new reducer to calculate total sales
+     CALC_TOTAL_SALES(state) {
+      state.totalSales = state.totalStoreValue - state.totalSales; // Deduct totalSales from totalStoreValue
+    },
+   
+   
 
   },
 
@@ -311,7 +323,6 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
-        state.totalSales += action.payload.price; // Assuming price is the amount of the sale
         toast.success("Book sold successfully");
       })
       .addCase(sellBook.rejected, (state, action) => {
@@ -320,18 +331,15 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       });
+      
+       
      
     },
 });  
 
-// Selector to get total sales amount from the Redux store
-// Memoized selector using createSelector from reselect
-export const selectTotalSales = createSelector(
-  (state) => state.product.totalSales,
-  (totalSales) => totalSales
-);
 
-export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_GENRE} =
+
+export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_GENRE,CALC_TOTAL_SALES} =
   productSlice.actions;
 
   
@@ -343,6 +351,9 @@ export const selectTotalStoreValue = (state) => state.product.totalStoreValue;
 export const selectOutOfStock = (state) => state.product.outOfStock;
 export const selectGenre = (state) => state.product.genre;
 export const selectProductTitles = (state) => state.product.productTitles; // Selector for product titles
+// Selector for total sales
+export const selectTotalSales = (state) => state.product.totalSales;
+
 
 
 

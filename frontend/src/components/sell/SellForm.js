@@ -5,6 +5,8 @@ import productService from "../../redux/features/product/productService"; // Imp
 import "./SellForm.scss"; // Import the SCSS file
 import { useNavigate} from "react-router-dom"; // Import useHistory from React Router
 
+
+
 const SellForm = () => {
   const navigate = useNavigate();
   
@@ -66,20 +68,17 @@ const SellForm = () => {
         throw new Error("Not enough stock available"); // Ensure quantity doesn't go negative
       }
       await productService.updateProduct(existingProduct._id, { quantity: updatedQuantity });
+       
     } else {
       // If the book title is new, add it with negative quantity
       await productService.createProduct({ title, quantity: -quantity,price });
+       
     }
-    console.log("Book sold successfully"); // Add a success message
-
-
-    // Redirect to dashboard after successful sell
-    navigate("/dashboard");
+     // // Redirect to dashboard after successful sell
+    // navigate("/dashboard");
 
     // Handle success, e.g., show a success message or update UI
   } catch (error) {
-    // Handle error, e.g., show an error message or handle accordingly
-    console.error("Error selling book:", error); // Log the error for debugging
   }
 };
 
