@@ -50,7 +50,7 @@ const ProductSummary = ({ products }) => {
     dispatch(CALC_STORE_VALUE(products));
     dispatch(CALC_OUTOFSTOCK(products));
     dispatch(CALC_GENRE(products));
-    dispatch(CALC_TOTAL_SALES(products)); // Dispatch action to calculate total sales
+    dispatch(CALC_TOTAL_SALES()); // Dispatch action to calculate total sales
     
   
     
