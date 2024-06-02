@@ -43,7 +43,7 @@ const ProductSummary = ({ products }) => {
   const outOfStock = useSelector(selectOutOfStock);
   const genre = useSelector(selectGenre);
   const totalSales = useSelector(selectTotalSales); // Get total sales from Redux state
-  
+  //const totalSales = useSelector((state) => state.products.totalSales);
 
   useEffect(() => {
     
@@ -71,7 +71,7 @@ const ProductSummary = ({ products }) => {
         <InfoBox
           icon={earningIcon}
           title={"Total Store Value"}
-          count={`₹${formatNumbers(totalStoreValue.toFixed(2))}  `}
+          count={`₹${formatNumbers(totalStoreValue ? totalStoreValue.toFixed(2) : '0.00')}  `}
           bgColor="card2"
         />
         <InfoBox
@@ -89,7 +89,7 @@ const ProductSummary = ({ products }) => {
         <InfoBox
           icon={salesIcon} // You can define the salesIcon if needed
           title={"Total Sales"}
-          count={`₹${formatNumbers(totalSales.toFixed(2))}`} // Format the totalSales amount as needed
+          count={`₹${formatNumbers(totalSales ? totalSales.toFixed(2) : '0.00')}`} // Format the totalSales amount as needed
           bgColor="card5" // Define the background color for the card if needed
         /> 
         

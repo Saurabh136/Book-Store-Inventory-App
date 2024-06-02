@@ -10,9 +10,8 @@ const productSchema = mongoose.Schema(
     title: {
       type: String,
       required: [true, "Please add a title"],
-      default: "N/A" ,
+      default: "N/A",
       trim: true,
-      
     },
     sku: {
       type: String,
@@ -22,14 +21,13 @@ const productSchema = mongoose.Schema(
     },
     genre: {
       type: String,
-     // required: [true, "Please add a genre"],
-      default: "N/A" ,
+      default: "N/A",
       trim: true,
     },
     quantity: {
       type: Number,
       required: [true, "Please add a quantity"],
-      default: 0, 
+      default: 0,
       trim: true,
       validate: {
         validator: (value) => value >= -999 && value <= 999, // Custom validation for quantity range
@@ -38,14 +36,13 @@ const productSchema = mongoose.Schema(
     },
     price: {
       type: Number,
-     // required: [true, "Please add a price"],
       default: 0,
       trim: true,
     },
     series: {
       type: String,
-      default: "N/A" ,
-      trim: true,      
+      default: "N/A",
+      trim: true,
     },
     serialnumber: {
       type: Number,
@@ -55,42 +52,37 @@ const productSchema = mongoose.Schema(
     primaryauthor: {
       type: String,
       default: "N/A",
-      trim: true, 
+      trim: true,
     },
     secondaryauthor: {
       type: String,
-      default: "N/A" ,
+      default: "N/A",
       trim: true,
     },
     editor: {
       type: String,
       default: "N/A",
       trim: true,
-       
     },
     publisher: {
       type: String,
       default: "N/A",
       trim: true,
-      
     },
     edition: {
       type: String,
       default: "N/A",
       trim: true,
-       
     },
     description: {
       type: String,
       default: "N/A",
       trim: true,
-       
     },
     condition: {
       type: String,
       default: "N/A",
       trim: true,
-       
     },
     image: {
       type: Object,

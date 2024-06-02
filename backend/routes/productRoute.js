@@ -1,24 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const protect = require("../middleWare/authMiddleware");
-const {
-  createProduct,
-  getProducts,
-  getProduct,
-  deleteProduct,
-  updateProduct,
-  sellBook, // Import sellBook controller
-} = require("../controllers/productController");
-const { upload } = require("../utils/fileUpload");
+const { createProduct, getProducts, getProduct, updateProduct, deleteProduct, sellBook } = require("../controllers/productController");
 
-router.post("/", protect, upload.single("image"), createProduct);
-router.patch("/:id", protect, upload.single("image"), updateProduct);
-router.get("/", protect, getProducts);
-router.get("/:id", protect, getProduct);
-router.delete("/:id", protect, deleteProduct);
-// Sell Book Route
-router.post("/sell/:id", protect, sellBook);
-
-
+router.post("/", createProduct);
+router.get("/", getProducts);
+router.get("/:id", getProduct);
+router.patch("/:id", updateProduct);
+router.delete("/:id", deleteProduct);
+//router.patch("/:id/sell", sellBook);
+router.patch("/:id/sell", (req, res, next) => {
+    console.log("PATCH /:id/sell called with id:", req.params.id);
+    next();
+  }, sellBook);
 
 module.exports = router;

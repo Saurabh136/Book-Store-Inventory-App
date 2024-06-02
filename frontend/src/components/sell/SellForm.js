@@ -1,14 +1,17 @@
 import React, { useState} from "react";
+import { useDispatch } from "react-redux";
+import { sellBook } from "../../redux/features/product/productSlice";
 
 import { useForm } from "react-hook-form";
 import productService from "../../redux/features/product/productService"; // Import your productService
 import "./SellForm.scss"; // Import the SCSS file
 import { useNavigate} from "react-router-dom"; // Import useHistory from React Router
-
+import { toast } from "react-toastify";
 
 
 const SellForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
   const { register, handleSubmit } = useForm();
   const [bookTitle, setBookTitle] = useState("");
@@ -56,41 +59,54 @@ const SellForm = () => {
   //     // Handle error, e.g., show an error message or handle accordingly
   //   }
   // };
-  const handleSellBook = async (title, quantity,price) => {
-  try {
-    const products = await productService.getProducts(); // Fetch all products
-    const existingProduct = products.find(product => product.title === title); // Check if the book title already exists in products
+//   const handleSellBook = async (title, quantity,price) => {
+//   try {
+//     const products = await productService.getProducts(); // Fetch all products
+//     const existingProduct = products.find(product => product.title === title); // Check if the book title already exists in products
 
-    if (existingProduct) {
-      // If the book title exists, reduce the quantity
-      const updatedQuantity = existingProduct.quantity - quantity;
-      if (updatedQuantity < 0) {
-        throw new Error("Not enough stock available"); // Ensure quantity doesn't go negative
-      }
-      await productService.updateProduct(existingProduct._id, { quantity: updatedQuantity });
+//     if (existingProduct) {
+//       // If the book title exists, reduce the quantity
+//       const updatedQuantity = existingProduct.quantity - quantity;
+//       if (updatedQuantity < 0) {
+//         throw new Error("Not enough stock available"); // Ensure quantity doesn't go negative
+//       }
+//       await productService.updateProduct(existingProduct._id, { quantity: updatedQuantity });
        
+//     } else {
+//       // If the book title is new, add it with negative quantity
+//       await productService.createProduct({ title, quantity: -quantity,price });
+       
+//     }
+//      // // Redirect to dashboard after successful sell
+//     // navigate("/dashboard");
+
+//     // Handle success, e.g., show a success message or update UI
+//   } catch (error) {
+//   }
+// };
+
+
+  // const onSubmit = (data) => {
+  //   console.log("Form submitted with data:", data); // Add this line
+  //   const { bookTitle, quantity,price} = data;
+  //   handleSellBook(bookTitle, quantity,price);
+  //   // You can add redirection or other actions after selling the book
+  //    // Redirect to dashboard after successful sell
+  //    navigate("/dashboard");
+  // };
+  const onSubmit = async (data) => {
+    const { bookTitle, quantity, price } = data;
+    const products = await productService.getProducts();
+    const product = products.find(p => p.title === bookTitle);
+  
+    if (product) {
+      dispatch(sellBook({ id: product._id, quantity, price }));
+      navigate("/dashboard");
     } else {
-      // If the book title is new, add it with negative quantity
-      await productService.createProduct({ title, quantity: -quantity,price });
-       
+      toast.error('Product not found');
     }
-     // // Redirect to dashboard after successful sell
-    // navigate("/dashboard");
-
-    // Handle success, e.g., show a success message or update UI
-  } catch (error) {
-  }
-};
-
-
-  const onSubmit = (data) => {
-    console.log("Form submitted with data:", data); // Add this line
-    const { bookTitle, quantity,price} = data;
-    handleSellBook(bookTitle, quantity,price);
-    // You can add redirection or other actions after selling the book
-     // Redirect to dashboard after successful sell
-     navigate("/dashboard");
   };
+
 
   return (
     <div className="sell-form-container">
@@ -130,4 +146,4 @@ const SellForm = () => {
   );
 };
 
-export default SellForm;
+export default SellForm; 

@@ -1,215 +1,102 @@
-const asyncHandler = require("express-async-handler");
 const Product = require("../models/productModel");
-const { fileSizeFormatter } = require("../utils/fileUpload");
-const cloudinary = require("cloudinary").v2;
+const Sales = require("../models/salesModel");
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
-// Create Product
-const createProduct = asyncHandler(async (req, res) => {
-  const {
-    title,
-    sku,
-    genre,
-    quantity,
-    price,
-    series,
-    serialnumber,
-    primaryauthor,
-    secondaryauthor,
-    editor,
-    publisher,
-    edition,
-    description,
-    condition,
-  } = req.body;
-
-  // Validation
-  if (!title || !quantity) {
-    res.status(400);
-    throw new Error("Please fill in all fields");
+const createProduct = async (req, res) => {
+  try {
+    const product = await Product.create(req.body);
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
+};
 
-  // Handle Image upload
-  let fileData = {};
-  if (req.file) {
-    // Save image to cloudinary
-    let uploadedFile;
-    try {
-      uploadedFile = await cloudinary.uploader.upload(req.file.path, {
-        folder: "KitabKorner App",
-        resource_type: "image",
-      });
-    } catch (error) {
-      res.status(500);
-      throw new Error("Image could not be uploaded");
+const getProducts = async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
     }
-
-    fileData = {
-      fileName: req.file.originalname,
-      filePath: uploadedFile.secure_url,
-      fileType: req.file.mimetype,
-      fileSize: fileSizeFormatter(req.file.size, 2),
-    };
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
+};
 
-  // Create Product
-  const product = await Product.create({
-    user: req.user.id,
-    title,
-    sku,
-    genre,
-    quantity,
-    price,
-    series,
-    serialnumber,
-    primaryauthor,
-    secondaryauthor,
-    editor,
-    publisher,
-    edition,
-    description,
-    condition,
-    image: fileData,
-  });
-
-  res.status(201).json(product);
-});
-
-// Get all Products
-const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({ user: req.user.id }).sort("-createdAt");
-  res.status(200).json(products);
-});
-
-// Get single product
-const getProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  // if product doesn't exist
-  if (!product) {
-    res.status(404);
-    throw new Error("Product not found");
+const updateProduct = async (req, res) => {
+  try {
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  // Match product to its user
-  if (product.user.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
-  res.status(200).json(product);
-});
+};
 
-// Delete Product
-const deleteProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  // if product doesn't exist
-  if (!product) {
-    res.status(404);
-    throw new Error("Product not found");
+const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  // Match product to its user
-  if (product.user.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
-  await product.remove();
-  res.status(200).json({ message: "Product deleted." });
-});
+};
 
-// Update Product
-const updateProduct = asyncHandler(async (req, res) => {
+const sellBook = async (req, res) => {
+  const { quantity, price } = req.body;
   const { id } = req.params;
 
-  const product = await Product.findById(id);
+  console.log(`Received request to sell book with id: ${id}, quantity: ${quantity}, price: ${price}`);
 
-  // if product doesn't exist
-  if (!product) {
-    res.status(404);
-    throw new Error("Product not found");
-  }
-  // Match product to its user
-  if (product.user.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
-
-  const updatedFields = { ...req.body };
-
-  // Handle Image upload
-  if (req.file) {
-    // Save image to cloudinary
-    let uploadedFile;
-    try {
-      uploadedFile = await cloudinary.uploader.upload(req.file.path, {
-        folder: "KitabKorner App",
-        resource_type: "image",
-      });
-    } catch (error) {
-      res.status(500);
-      throw new Error("Image could not be uploaded");
+  try {
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
     }
 
-    updatedFields.image = {
-      fileName: req.file.originalname,
-      filePath: uploadedFile.secure_url,
-      fileType: req.file.mimetype,
-      fileSize: fileSizeFormatter(req.file.size, 2),
-    };
-  }
-
-  // Update Product
-  const updatedProduct = await Product.findByIdAndUpdate(
-    id,
-    { $set: updatedFields },
-    {
-      new: true,
-      runValidators: true,
+    if (product.quantity < quantity) {
+      return res.status(400).json({ message: 'Insufficient stock' });
     }
-  );
 
-  res.status(200).json(updatedProduct);
-});
+    product.quantity -= quantity;
+    await product.save();
 
-// Sell Book
-const sellBook = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { quantity,price} = req.body;
-  console.log("Received request to sell book:", id, quantity,price); 
+    const salesData = await Sales.findOne({});
+    if (!salesData) {
+      const newSales = new Sales({ totalSales: price * quantity });
+      await newSales.save();
+    } else {
+      salesData.totalSales += price * quantity;
+      await salesData.save();
+    }
 
-  const product = await Product.findById(id);
-
-  if (!product) {
-    res.status(404);
-    throw new Error("Product not found");
+    res.status(200).json({ product, valueDecrease: price * quantity });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  if (product.quantity < quantity) {
-    res.status(400);
-    throw new Error("Not enough stock available");
-  }
-
- 
-
-  product.quantity -= quantity;
-  if (price !== undefined) {
-    product.price = price;
-  }
-  await product.save();
-
-   
-
-  res.status(200).json({ message: "Book sold successfully",product});
-});
-
+};
 module.exports = {
   createProduct,
   getProducts,
   getProduct,
-  deleteProduct,
   updateProduct,
-  sellBook, // Add sellBook to exports
+  deleteProduct,
+  sellBook,
 };
-
