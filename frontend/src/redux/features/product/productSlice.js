@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import productService from "./productService";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 // Fetch product titles
 export const getProductTitles = createAsyncThunk(
@@ -11,8 +12,10 @@ export const getProductTitles = createAsyncThunk(
       const titles = products.map((product) => product.title);
       return titles;
     } catch (error) {
-      const message = 
-        (error.response && error.response.data && error.response.data.message) ||
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
         error.message ||
         error.toString();
       console.log(message);
@@ -23,10 +26,11 @@ export const getProductTitles = createAsyncThunk(
 
 // Sell a book
 export const sellBook = createAsyncThunk(
-  "products/sellBook",
+  'products/sellBook',
   async ({ id, quantity, price }, { rejectWithValue }) => {
     try {
-      return await productService.sellBook(id, quantity, price);
+      const response = await axios.post(`/api/products/sell/${id}`, { quantity, price });
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -44,8 +48,8 @@ const initialState = {
   totalStoreValue: 0,
   outOfStock: 0,
   genre: [],
-  productTitles: [],
-  totalSales: 0,
+  productTitles: [], // Add productTitles to store fetched titles
+  totalSales: 0, // Add a new property for total sales
 };
 
 // Create New Product
@@ -56,7 +60,9 @@ export const createProduct = createAsyncThunk(
       return await productService.createProduct(formData);
     } catch (error) {
       const message =
-        (error.response && error.response.data && error.response.data.message) ||
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
         error.message ||
         error.toString();
       console.log(message);
@@ -73,7 +79,9 @@ export const getProducts = createAsyncThunk(
       return await productService.getProducts();
     } catch (error) {
       const message =
-        (error.response && error.response.data && error.response.data.message) ||
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
         error.message ||
         error.toString();
       console.log(message);
@@ -90,7 +98,9 @@ export const deleteProduct = createAsyncThunk(
       return await productService.deleteProduct(id);
     } catch (error) {
       const message =
-        (error.response && error.response.data && error.response.data.message) ||
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
         error.message ||
         error.toString();
       console.log(message);
@@ -107,7 +117,9 @@ export const getProduct = createAsyncThunk(
       return await productService.getProduct(id);
     } catch (error) {
       const message =
-        (error.response && error.response.data && error.response.data.message) ||
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
         error.message ||
         error.toString();
       console.log(message);
@@ -124,7 +136,9 @@ export const updateProduct = createAsyncThunk(
       return await productService.updateProduct(id, formData);
     } catch (error) {
       const message =
-        (error.response && error.response.data && error.response.data.message) ||
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
         error.message ||
         error.toString();
       console.log(message);
@@ -139,22 +153,24 @@ const productSlice = createSlice({
   reducers: {
     CALC_STORE_VALUE(state, action) {
       const products = action.payload;
-      const totalValue = products.reduce((acc, product) => acc + product.price * product.quantity, 0);
+      const array = [];
+      products.map((item) => {
+        const { price, quantity } = item;
+        const productValue = price * quantity;
+        return array.push(productValue);
+      });
+      const totalValue = array.reduce((a, b) => a + b, 0);
       state.totalStoreValue = totalValue;
     },
     CALC_OUTOFSTOCK(state, action) {
       const products = action.payload;
-      const outOfStockCount = products.filter(product => product.quantity === 0).length;
+      const outOfStockCount = products.filter(item => item.quantity === 0).length;
       state.outOfStock = outOfStockCount;
     },
     CALC_GENRE(state, action) {
       const products = action.payload;
-      const genres = [...new Set(products.map(product => product.genre))];
-      state.genre = genres;
-    },
-    CALC_TOTAL_SALES(state, action) {
-      const sales = action.payload;
-      state.totalSales = sales;
+      const uniqueGenre = [...new Set(products.map(item => item.genre))];
+      state.genre = uniqueGenre;
     },
   },
   extraReducers: (builder) => {
@@ -197,6 +213,7 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
+        state.products = state.products.filter(product => product._id !== action.payload.id);
         toast.success("Product deleted successfully");
       })
       .addCase(deleteProduct.rejected, (state, action) => {
@@ -227,6 +244,10 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
+        const index = state.products.findIndex(product => product._id === action.payload._id);
+        if (index !== -1) {
+          state.products[index] = action.payload;
+        }
         toast.success("Product updated successfully");
       })
       .addCase(updateProduct.rejected, (state, action) => {
@@ -242,20 +263,26 @@ const productSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(sellBook.fulfilled, (state, action) => {
+        state.isLoading = false;
         const { product, valueDecrease } = action.payload;
-        const existingProduct = state.products.find(p => p._id === product._id);
-        if (existingProduct) {
-          existingProduct.quantity = product.quantity;
+        const index = state.products.findIndex(item => item._id === product._id);
+        if (index !== -1) {
+          state.products[index] = product;
         }
+        state.totalStoreValue -= valueDecrease;
         state.totalSales += valueDecrease;
+        toast.success("Book sold successfully");
       })
       .addCase(sellBook.rejected, (state, action) => {
-        state.error = action.payload;
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
       });
   },
 });
 
-export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_GENRE, CALC_TOTAL_SALES } = productSlice.actions;
+export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_GENRE } = productSlice.actions;
 
 export const selectIsLoading = (state) => state.product.isLoading;
 export const selectProduct = (state) => state.product.product;
@@ -264,6 +291,6 @@ export const selectOutOfStock = (state) => state.product.outOfStock;
 export const selectGenre = (state) => state.product.genre;
 export const selectProductTitles = (state) => state.product.productTitles;
 export const selectTotalSales = (state) => state.product.totalSales;
-export const selectProducts = (state) => state.products.products;
+export const selectProducts = (state) => state.product.products;
 
 export default productSlice.reducer;

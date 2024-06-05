@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import "./ProductSummary.scss";
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import { BsCart4, BsCartX } from "react-icons/bs";
@@ -11,17 +11,12 @@ import {
   CALC_GENRE,
   CALC_OUTOFSTOCK,
   CALC_STORE_VALUE,
-  CALC_TOTAL_SALES, // Import the CALC_TOTAL_SALES action
-
-  
-  selectGenre,
-  selectOutOfStock,
+ // CALC_TOTAL_SALES,
   selectTotalStoreValue,
-  selectTotalSales, // Import the selectTotalSales selector
-  
-
+  selectOutOfStock,
+  selectGenre,
+  selectTotalSales,
 } from "../../../redux/features/product/productSlice";
-
 
 // Icons
 const earningIcon = <FaIndianRupeeSign size={40} color="#fff" />;
@@ -30,11 +25,9 @@ const genreIcon = <BiCategory size={40} color="#fff" />;
 const outOfStockIcon = <BsCartX size={40} color="#fff" />;
 const salesIcon = <FcSalesPerformance size={40} color="#fff" />;
 
-
 // Format Amount
 export const formatNumbers = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
- 
 };
 
 const ProductSummary = ({ products }) => {
@@ -42,21 +35,14 @@ const ProductSummary = ({ products }) => {
   const totalStoreValue = useSelector(selectTotalStoreValue);
   const outOfStock = useSelector(selectOutOfStock);
   const genre = useSelector(selectGenre);
-  const totalSales = useSelector(selectTotalSales); // Get total sales from Redux state
-  //const totalSales = useSelector((state) => state.products.totalSales);
+  const totalSales = useSelector(selectTotalSales);
 
   useEffect(() => {
-    
     dispatch(CALC_STORE_VALUE(products));
     dispatch(CALC_OUTOFSTOCK(products));
     dispatch(CALC_GENRE(products));
-    dispatch(CALC_TOTAL_SALES()); // Dispatch action to calculate total sales
-    
-  
-    
+   // dispatch(CALC_TOTAL_SALES());
   }, [dispatch, products]);
-
-  
 
   return (
     <div className="product-summary">
@@ -71,7 +57,7 @@ const ProductSummary = ({ products }) => {
         <InfoBox
           icon={earningIcon}
           title={"Total Store Value"}
-          count={`₹${formatNumbers(totalStoreValue ? totalStoreValue.toFixed(2) : '0.00')}  `}
+          count={`₹${formatNumbers(totalStoreValue.toFixed(2))}`}
           bgColor="card2"
         />
         <InfoBox
@@ -87,14 +73,11 @@ const ProductSummary = ({ products }) => {
           bgColor="card4"
         />
         <InfoBox
-          icon={salesIcon} // You can define the salesIcon if needed
+          icon={salesIcon}
           title={"Total Sales"}
-          count={`₹${formatNumbers(totalSales ? totalSales.toFixed(2) : '0.00')}`} // Format the totalSales amount as needed
-          bgColor="card5" // Define the background color for the card if needed
-        /> 
-        
-          
-        
+          count={`₹${formatNumbers(totalSales.toFixed(2))}`}
+          bgColor="card5"
+        />
       </div>
     </div>
   );

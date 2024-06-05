@@ -17,6 +17,7 @@ mongoose.set('strictQuery', false);
 
 // Middlewares
 app.use(express.json());
+//app.use(cookieParser());
 app.use(cookieParser("thekitabkorner", {
   sameSite: "None",
   secure: true,
@@ -26,10 +27,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://thekitabkorner.vercel.app"],
+    origin: ["http://localhost:3000","https://thekitabkorner.vercel.app"],
     credentials: true,
   })
 );
+
 
 // Trusting proxy for HTTPS (if applicable)
 app.set('trust proxy', 1);
@@ -48,7 +50,6 @@ app.get("/", (req, res) => {
 
 // Error Middleware
 app.use(errorHandler);
-
 // Initialize Total Sales if not present in DB
 const initializeTotalSales = async () => {
   const salesData = await Sales.findOne({});
@@ -57,15 +58,15 @@ const initializeTotalSales = async () => {
     await newSales.save();
   }
 };
-
 // Connect to DB and start server
 const PORT = process.env.PORT || 5000;
 mongoose
   .connect(process.env.MONGO_URI)
+  
   .then(() => {
-    initializeTotalSales(); // Make sure this function is called after the DB connection is established
+    initializeTotalSales();
     app.listen(PORT, () => {
       console.log(`Server Running on port ${PORT}`);
     });
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log(err));   
