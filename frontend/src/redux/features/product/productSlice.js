@@ -3,6 +3,7 @@ import productService from "./productService";
 import { toast } from "react-toastify";
 import axios from "axios";
 
+
 // Fetch product titles
 export const getProductTitles = createAsyncThunk(
   "products/getProductTitles",
@@ -37,6 +38,15 @@ export const sellBook = createAsyncThunk(
   }
 );
 
+
+
+
+
+
+
+
+
+
 const initialState = {
   product: null,
   error: null,
@@ -50,6 +60,7 @@ const initialState = {
   genre: [],
   productTitles: [], // Add productTitles to store fetched titles
   totalSales: 0, // Add a new property for total sales
+  
 };
 
 // Create New Product
@@ -127,7 +138,6 @@ export const getProduct = createAsyncThunk(
     }
   }
 );
-
 // Update product
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
@@ -147,10 +157,20 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+
+
+
+
+
+
+
+
 const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
+    
+
     CALC_STORE_VALUE(state, action) {
       const products = action.payload;
       const array = [];
@@ -159,20 +179,50 @@ const productSlice = createSlice({
         const productValue = price * quantity;
         return array.push(productValue);
       });
-      const totalValue = array.reduce((a, b) => a + b, 0);
+      const totalValue = array.reduce((a, b) => {
+        return a + b;
+      }, 0);
       state.totalStoreValue = totalValue;
     },
     CALC_OUTOFSTOCK(state, action) {
       const products = action.payload;
-      const outOfStockCount = products.filter(item => item.quantity === 0).length;
-      state.outOfStock = outOfStockCount;
+      const array = [];
+      products.map((item) => {
+        const { quantity } = item;
+
+        return array.push(quantity);
+      });
+      let count = 0;
+      array.forEach((number) => {
+        if (number === 0 || number === "0") {
+          count += 1;
+        }
+      });
+      state.outOfStock = count;
     },
     CALC_GENRE(state, action) {
       const products = action.payload;
-      const uniqueGenre = [...new Set(products.map(item => item.genre))];
+      const array = [];
+      products.map((item) => {
+        const { genre } = item;
+
+        return array.push(genre);
+      });
+      const uniqueGenre = [...new Set(array)];
       state.genre = uniqueGenre;
     },
+
+     // Add a new reducer to calculate total sales
+     CALC_TOTAL_SALES(state) {
+      state.totalSales = state.totalStoreValue - state.totalSales; // Deduct totalSales from totalStoreValue
+    },
+   
+   
+
   },
+
+   
+  
   extraReducers: (builder) => {
     builder
       .addCase(createProduct.pending, (state) => {
@@ -182,6 +232,7 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
+        console.log(action.payload);
         state.products.push(action.payload);
         toast.success("Product added successfully");
       })
@@ -198,12 +249,14 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
+        console.log(action.payload);
         state.products = action.payload;
       })
       .addCase(getProducts.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+        state.error = action.payload; // Handle error if fetching products fails
         toast.error(action.payload);
       })
       .addCase(deleteProduct.pending, (state) => {
@@ -213,7 +266,6 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
-        state.products = state.products.filter(product => product._id !== action.payload.id);
         toast.success("Product deleted successfully");
       })
       .addCase(deleteProduct.rejected, (state, action) => {
@@ -244,10 +296,6 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
-        const index = state.products.findIndex(product => product._id === action.payload._id);
-        if (index !== -1) {
-          state.products[index] = action.payload;
-        }
         toast.success("Product updated successfully");
       })
       .addCase(updateProduct.rejected, (state, action) => {
@@ -263,15 +311,17 @@ const productSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(sellBook.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.loading = false;
         const { product, valueDecrease } = action.payload;
-        const index = state.products.findIndex(item => item._id === product._id);
+        // Update the product in the state
+        const index = state.items.findIndex(item => item._id === product._id);
         if (index !== -1) {
-          state.products[index] = product;
+          state.items[index] = product;
         }
+        // Decrease the total store value
         state.totalStoreValue -= valueDecrease;
+        // Add to the total sales
         state.totalSales += valueDecrease;
-        toast.success("Book sold successfully");
       })
       .addCase(sellBook.rejected, (state, action) => {
         state.isLoading = false;
@@ -279,18 +329,31 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       });
-  },
-});
+      
+       
+     
+    },
+});  
 
-export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_GENRE } = productSlice.actions;
+
+
+export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_GENRE,CALC_TOTAL_SALES} =
+  productSlice.actions;
+
+  
+   
 
 export const selectIsLoading = (state) => state.product.isLoading;
 export const selectProduct = (state) => state.product.product;
 export const selectTotalStoreValue = (state) => state.product.totalStoreValue;
 export const selectOutOfStock = (state) => state.product.outOfStock;
 export const selectGenre = (state) => state.product.genre;
-export const selectProductTitles = (state) => state.product.productTitles;
+export const selectProductTitles = (state) => state.product.productTitles; // Selector for product titles
+// Selector for total sales
 export const selectTotalSales = (state) => state.product.totalSales;
-export const selectProducts = (state) => state.product.products;
+
+
+
+
 
 export default productSlice.reducer;

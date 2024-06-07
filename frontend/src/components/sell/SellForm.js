@@ -1,14 +1,17 @@
 import React, { useState} from "react";
+//import { useDispatch } from "react-redux";
+//import { sellBook } from "../../redux/features/product/productSlice";
 
 import { useForm } from "react-hook-form";
 import productService from "../../redux/features/product/productService"; // Import your productService
 import "./SellForm.scss"; // Import the SCSS file
 import { useNavigate} from "react-router-dom"; // Import useHistory from React Router
-
+//import { toast } from "react-toastify";
 
 
 const SellForm = () => {
   const navigate = useNavigate();
+  //const dispatch = useDispatch();
   
   const { register, handleSubmit } = useForm();
   const [bookTitle, setBookTitle] = useState("");
@@ -91,6 +94,8 @@ const SellForm = () => {
      // Redirect to dashboard after successful sell
      navigate("/dashboard");
   };
+  
+
 
   return (
     <div className="sell-form-container">

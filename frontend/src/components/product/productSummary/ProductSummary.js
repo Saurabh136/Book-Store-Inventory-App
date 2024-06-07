@@ -11,7 +11,7 @@ import {
   CALC_GENRE,
   CALC_OUTOFSTOCK,
   CALC_STORE_VALUE,
- // CALC_TOTAL_SALES,
+  CALC_TOTAL_SALES,
   selectTotalStoreValue,
   selectOutOfStock,
   selectGenre,
@@ -41,7 +41,7 @@ const ProductSummary = ({ products }) => {
     dispatch(CALC_STORE_VALUE(products));
     dispatch(CALC_OUTOFSTOCK(products));
     dispatch(CALC_GENRE(products));
-   // dispatch(CALC_TOTAL_SALES());
+    dispatch(CALC_TOTAL_SALES());
   }, [dispatch, products]);
 
   return (
